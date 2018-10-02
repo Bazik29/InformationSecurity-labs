@@ -10,14 +10,18 @@ def decode(str, k, alph):
 			result_str += str[i]
 	return result_str
 
-alph = "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"
 
-test = "Н	У	Л	Т	Х	С	Ж	У	Г	Ч	Л	В"
-print(decode(test, 3, alph))
+def filtr(str):
+	tests = ["ЦЦ", "ОЪ", "АЪ"]
+	for test in tests:
+		if (str.find(test) != -1): return False
+	return True
 
-source_str = "ШОФТЙЧШЩМЕТУЖЦВЮБУАШЬТ,ЯТУЩОЫЫЙЧЯЭЬЪЬЗКМТЮБСЬСЬ ШЩМЕA"
+if __name__ == "__main__":
+	alph = "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"
+	source_str = "ШОФТЙЧШЩМЕТУЖЦВЮБУАШЬТ,ЯТУЩОЫЫЙЧЯЭЬЪЬЗКМТЮБСЬСЬ ШЩМЕA"
 
-for i in range(1, 33):
-	print(i,decode(source_str, i, alph))
-
-# print(decode(source_str, 14, alph))
+	for i in range(1, 33):
+		res = decode(source_str, i, alph)
+		if (filtr(res)):
+			print(i, decode(source_str, i, alph))
