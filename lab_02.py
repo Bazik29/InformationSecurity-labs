@@ -1,30 +1,68 @@
 # Шифр Плейфейера
+
+
 import numpy as np
 
 
-def prepare_key(key):
-    res_key = ""
-    for char in key.translate(''.maketrans('ЬЙЁ', 'ЪИЕ')):
-        if res_key.find(char) == -1:
-            res_key += char
-    return "".join(res_key)
-
-
-def key_matrix(key, alph):
+def maxtrix_Playfair(key, alphabet, h=5, w=6):
+    # Создание матрицы
     temp = list(key)
-    for char in alph:
+    for char in alphabet:
         if key.find(char) == -1:
             temp += char
-    array = np.array(temp).reshape(5, 6)
-    return array
+    matrix = np.array(temp).reshape(h, w)
+    return matrix
 
 
-def decode(string, matrix):
-    h, w = matrix.shape
-    h -= 1
-    w -= 1
+def encryption_Playfair(text, key, alphabet, h=5, w=6, aggreg="Э"):
+    matrix = maxtrix_Playfair(key, alphabet, h, w)
+
+    # Преобразование текста
+    pairs = []
+    if len(text) % 2 != 0:
+        text += aggreg
+    for i in range(0, len(text) - 1, 2):
+        if text[i] != text[i + 1]:
+            pairs.append(text[i] + text[i + 1])
+        else:
+            pairs.append(text[i] + aggreg)
+            pairs.append(aggreg + text[i + 1])
+
+    encrypt_text = ''
+    x0, y0, x1, y1 = 0, 0, 0, 0
+    for element in pairs:
+        # Позиция букв в матрице
+        row_0, col_0 = np.where(matrix == element[0])
+        row_1, col_1 = np.where(matrix == element[1])
+        row_0, col_0 = row_0[0], col_0[0]
+        row_1, col_1 = row_1[0], col_1[0]
+
+        # Если в одной строке
+        if row_0 == row_1:
+            y0 = y1 = row_0
+            x0 = (col_0 + 1) % w
+            x1 = (col_1 + 1) % w
+        # Если в одной колонке
+        elif col_0 == col_1:
+            x0 = x1 = col_0
+            y0 = (row_0 + 1) % h
+            y1 = (row_1 + 1) % h
+        # Иначе
+        else:
+            y0 = row_0
+            x0 = col_1
+            y1 = row_1
+            x1 = col_0
+        encrypt_text += matrix[y0][x0] + matrix[y1][x1]
+    return encrypt_text
+
+
+def decryption_Playfair(text, key, alphabet, h=5, w=6):
+    matrix = maxtrix_Playfair(key, alphabet, h, w)
+
     # Разбиваем на пары
-    temp = [string[i:i + 2] for i in range(0, len(string), 2)]
+    temp = [text[i:i + 2] for i in range(0, len(text), 2)]
+
     answer = ''
     x1, y1, x2, y2 = 0, 0, 0, 0
     for element in temp:
@@ -37,7 +75,7 @@ def decode(string, matrix):
         if i == n:
             y1 = y2 = i
             if j == 0:
-                x1 = w
+                x1 = w - 1
             else:
                 x1 = j - 1
             x2 = m - 1
@@ -45,7 +83,7 @@ def decode(string, matrix):
         elif j == m:
             x1 = x2 = j
             if i == 0:
-                y1 = h
+                y1 = h - 1
             else:
                 y1 = i - 1
             y2 = n - 1
@@ -59,18 +97,28 @@ def decode(string, matrix):
     return answer
 
 
+def prepare_key(key):
+    res_key = ""
+    for char in key.translate(''.maketrans('ЬЙЁ', 'ЪИЕ')):
+        if res_key.find(char) == -1:
+            res_key += char
+    return "".join(res_key)
+
+
 if __name__ == "__main__":
-    # удалено: Й Ё Ь
-    alph = 'АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩЪЫЭЮЯ'
+    # # удалено: Й Ё Ь
+    alphabet = 'АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩЪЫЭЮЯ'
 
-    key_word = 'СОЛНЦЕ'
-    decode_string = 'ЗОИЦОЫИТЗУСОШЖАЦФАВЗЗКЗЧНБЗЖУКПБЕЫТЗЪЗФЩ'
+    key = "СОЛНЦЕ"
+    encrypt_text = "ЗОИЦОЫИТЗУСОШЖАЦФАВЗЗКЗЧНБЗЖУКПБЕЫТЗЪЗФЩ"
 
-    new_key = prepare_key(key_word)
-    matrix = key_matrix(new_key, alph)
-    result = decode(decode_string, matrix)
+    key_word = prepare_key(key)
 
-    print(new_key)
-    print(matrix)
-    print(decode_string)
-    print(result)
+    print(maxtrix_Playfair(key_word, alphabet))
+
+    decrypt_text = decryption_Playfair(encrypt_text, key_word, alphabet)
+    print(encrypt_text)
+    print(decrypt_text)
+
+    test_encrypt = encryption_Playfair(decrypt_text, key_word, alphabet)
+    print("Test encryption:", encrypt_text == test_encrypt)
