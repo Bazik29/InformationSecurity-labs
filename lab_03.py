@@ -2,6 +2,34 @@
 import random
 
 
+def encryption_Vigenere(text, key, alphabet):
+    encrypt_text = ""
+    for i in range(len(text)):
+        a = alphabet.find(text[i])
+        if a == -1:
+            raise Exception("Алфавит не содержит " + text[i])
+        b = alphabet.find(key[i % len(key)])
+        if b == -1:
+            raise Exception("Алфавит не содержит " + key[i])
+        c = (a + b) % len(alphabet)
+        encrypt_text += alphabet[c]
+    return encrypt_text
+
+
+def decryption_Vigenere(text, key, alphabet):
+    decrypt_text = ""
+    for i in range(len(text)):
+        c = alphabet.find(text[i])
+        if c == -1:
+            raise Exception("Алфавит не содержит " + text[i])
+        b = alphabet.find(key[i % len(key)])
+        if b == -1:
+            raise Exception("Алфавит не содержит " + key[i])
+        a = (c - b) % len(alphabet)
+        decrypt_text += alphabet[a]
+    return decrypt_text
+
+
 def code(string, key, alph):
     if len(string) != len(key):
         return "ERROR!!!"
@@ -32,25 +60,25 @@ def decode(string, key, alph):
     return result
 
 
-def gen_key(string, alph):
+def generate_key(length, alphabet):
     result = ""
-    alph_list = list(alph)
-    for ch in string:
-        result += alph_list[random.randint(0, len(alph) - 1)]
+    for i in range(length):
+        result += alphabet[random.randint(0, len(alphabet) - 1)]
     return result
 
 
 if __name__ == "__main__":
     # удалено: Ё
-    alph = 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'
+    alphabet = 'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'
 
-    source = "ИСПОЛЪЗУЙТЕСРЕДСТВАКРИПТОГРАФИИДЛЯЗАЩИТЫ"
-    key = gen_key(source, alph)
+    source_text = "ИСПОЛЪЗУЙТЕСРЕДСТВАКРИПТОГРАФИИДЛЯЗАЩИТЫ"
 
-    code_string = code(source, key, alph)
-    decode_string = decode(code_string, key, alph)
+    key_word = generate_key(random.randint(0, len(source_text) - 1), alphabet)
+    encrypt_text = encryption_Vigenere(source_text, key_word, alphabet)
+    decrypt_text = decryption_Vigenere(encrypt_text, key_word, alphabet)
 
-    print("КЛЮЧ -", key)
-    print("ИСХД -", source)
-    print("ШИФР -", code_string)
-    print("ДЕКД -", decode_string)
+    print("Text:", source_text)
+    print("Key:", key_word)
+    print("Encode:", encrypt_text)
+    print("Decode:", decrypt_text)
+    print("Test decryption:", decrypt_text == source_text)
