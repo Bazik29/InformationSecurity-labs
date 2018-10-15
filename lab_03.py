@@ -30,36 +30,6 @@ def decryption_Vigenere(text, key, alphabet):
     return decrypt_text
 
 
-def code(string, key, alph):
-    if len(string) != len(key):
-        return "ERROR!!!"
-    result = ""
-    string_list = list(string)
-    key_list = list(key)
-    alph_list = list(alph)
-    for i in range(0, len(string)):
-        a = alph.find(string_list[i])
-        b = alph.find(key_list[i])
-        c = (a + b) % len(alph)
-        result += alph_list[c]
-    return result
-
-
-def decode(string, key, alph):
-    if len(string) != len(key):
-        return "ERROR!!!"
-    result = ""
-    string_list = list(string)
-    key_list = list(key)
-    alph_list = list(alph)
-    for i in range(0, len(string)):
-        c = alph.find(string_list[i])
-        b = alph.find(key_list[i])
-        a = (c - b) % len(alph)
-        result += alph_list[a]
-    return result
-
-
 def generate_key(length, alphabet):
     result = ""
     for i in range(length):

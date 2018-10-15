@@ -30,7 +30,7 @@ def decryption_Caesar(text, key, alphabet):
     return result
 
 
-def broot_Caesar(text, alphabet, test_func, *args, **kwargs):
+def brute_Caesar(text, alphabet, test_func, *args, **kwargs):
     result_dict = {}
     for i in range(1, len(alphabet) + 1):
         res = decryption_Caesar(encrypt_text, i, alphabet)
@@ -44,9 +44,9 @@ if __name__ == "__main__":
 
     encrypt_text = "ШОФТЙЧШЩМЕТУЖЦВЮБУАШЬТ,ЯТУЩОЫЫЙЧЯЭЬЪЬЗКМТЮБСЬСЬ ШЩМЕA"
 
-    broot_res = broot_Caesar(encrypt_text, alphabet, test_freq, k=0.25)
+    brute_res = brute_Caesar(encrypt_text, alphabet, test_freq, k=0.25)
 
-    for key, test in broot_res.items():
+    for key, test in brute_res.items():
         print(key, test)
 
     test_encrypt = encryption_Caesar(decryption_Caesar(
