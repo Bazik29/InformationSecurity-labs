@@ -59,14 +59,35 @@ def decode_RotateGrille(matrix, grille):
     return ''.join(decode_text)
 
 
-arr = np.array([[0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-                [1, 0, 0, 0, 1, 0, 1, 1, 0, 0],
-                [0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
-                [0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
-                [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 1, 0, 0, 1, 1, 0, 0, 1]]
-               )
-text = "ШИФРРЕШЕТКАЯВЛЯЕТСЯЧАСТНЫМСЛУЧАЕМШИФРАМАРШРУТНОЙПЕРЕСТАНОВКИ"
+def prepareText(text, aggreg="*"):
+    text = text.replace(' ', '').replace('\t', '').replace('\n', '')
+    # ужс...
+    while(len(text) % 4 != 0):
+        text = text + aggreg
+    return text
 
-print(encode_RotateGrille(text, arr))
-print(decode_RotateGrille(encode_RotateGrille(text, arr), arr))
+
+def allDims(text):
+    dims = []
+    for i in range(len(text)):
+        for j in range(len(text)):
+            if (i % 2 == 0 and j % 2 == 0 and i*j == len(text)):
+                dims.append([i, j])
+    return dims
+
+
+if __name__ == "__main__":
+    arr = np.array([[0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [1, 0, 0, 0, 1, 0, 1, 1, 0, 0],
+                    [0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
+                    [0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
+                    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 1, 0, 0, 1, 1, 0, 0, 1]]
+                   )
+    text = "ШИФРРЕШЕТКАЯВЛЯЕТСЯЧАСТНЫМ\nСЛУЧАЕМШИФРА МАРШРУТНОЙ\tПЕРЕСТАНОВК"
+    text = prepareText(text)
+    print(text)
+    print(len(text))
+    print(allDims(text))
+    print(encode_RotateGrille(text, arr))
+    print(decode_RotateGrille(encode_RotateGrille(text, arr), arr))
