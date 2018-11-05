@@ -19,14 +19,23 @@ def encryption_Playfair(text, key, alphabet, h=5, w=6, aggreg="Э"):
 
     # Преобразование текста
     pairs = []
-    if len(text) % 2 != 0:
-        text += aggreg
-    for i in range(0, len(text) - 1, 2):
-        if text[i] != text[i + 1]:
-            pairs.append(text[i] + text[i + 1])
+    _i = 0
+    _len = len(text)
+
+    while _i < _len:
+        # если нехватает пары последнему
+        if _i + 1 == _len:
+            pairs.append(text[_i] + aggreg)
+            break
+        # если не одинаковые
+        if text[_i] != text[_i + 1]:
+            pairs.append(text[_i] + text[_i + 1])
+            _i += 2
         else:
-            pairs.append(text[i] + aggreg)
-            pairs.append(aggreg + text[i + 1])
+            pairs.append(text[_i] + aggreg)
+            _i += 1
+
+    print(pairs)
 
     encrypt_text = ''
     x0, y0, x1, y1 = 0, 0, 0, 0
@@ -110,15 +119,21 @@ if __name__ == "__main__":
     alphabet = 'АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩЪЫЭЮЯ'
 
     key = "СОЛНЦЕ"
-    encrypt_text = "ЗОИЦОЫИТЗУСОШЖАЦФАВЗЗКЗЧНБЗЖУКПБЕЫТЗЪЗФЩ"
-
     key_word = prepare_key(key)
+    # encrypt_text = "ЗОИЦОЫИТЗУСОШЖАЦФАВЗЗКЗЧНБЗЖУКПБЕЫТЗЪЗФЩ"
 
-    print(maxtrix_Playfair(key_word, alphabet))
+    # print(maxtrix_Playfair(key_word, alphabet))
 
-    decrypt_text = decryption_Playfair(encrypt_text, key_word, alphabet)
-    print(encrypt_text)
-    print(decrypt_text)
+    # decrypt_text = decryption_Playfair(encrypt_text, key_word, alphabet)
+    # print(encrypt_text)
+    # print(decrypt_text)
 
-    test_encrypt = encryption_Playfair(decrypt_text, key_word, alphabet)
-    print("Test encryption:", encrypt_text == test_encrypt)
+    # test_encrypt = encryption_Playfair(decrypt_text, key_word, alphabet)
+    # print("Test encryption:", encrypt_text == test_encrypt)
+
+    tstr = "ААПРОВЕРКАКК"
+    print(tstr)
+    en_tsrt = encryption_Playfair(tstr, key_word, alphabet)
+    print(en_tsrt)
+    de_tsrt = decryption_Playfair(en_tsrt, key_word, alphabet)
+    print(de_tsrt)
