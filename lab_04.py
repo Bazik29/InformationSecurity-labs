@@ -6,14 +6,19 @@ from itertools import permutations
 from analysis import test_bigram
 
 
-def encryption_VertTranspos(text, key):
+def encryption_VertTranspos(text, key, aggreg="Э"):
     len_key = len(key)
     len_txt = len(text)
-    if len_txt % len_key != 0:
-        raise Exception("Не возможно сотавить матрицу")
+
+    list_text = list(text)
+    # дополняем исходный текст
+    while(len(list_text) % len_key != 0):
+        list_text.append(aggreg)
+
+    len_txt = len(list_text)
 
     order = [int(x) - 1 for x in key]
-    matrix = np.array(list(text)).reshape(int(len_txt / len_key), len_key)
+    matrix = np.array(list_text).reshape(int(len_txt / len_key), len_key)
     temp = []
     for i in range(len_key):
         temp.append(list(matrix[:, order.index(i)]))
@@ -24,7 +29,8 @@ def decryption_VertTranspos(text, key):
     len_key = len(key)
     len_txt = len(text)
     if len_txt % len_key != 0:
-        raise Exception("Не возможно сотавить матрицу")
+        raise Exception(
+            f"Не возможно сотавить матрицу при расшифрофке.\nДлина текста: {len_txt}\nДлина ключа: {len_key}.\n")
     order = [int(x) - 1 for x in key]
     matrix = np.array(list(text)).reshape(len_key, int(len_txt / len_key))
     matrix = np.transpose(matrix)
@@ -66,22 +72,26 @@ def brute_VertTranspos(encrypt_text, key, test_func, *args, **kwargs):
 
 
 if __name__ == "__main__":
-    # test_text = "ПЕРЕСТАНОВКАТЕКСТАПОСТОЛБЦАМ"
-    # test_key = "4312567"
-    # encrypt_text = encryption_VertTranspos(test_text, test_key)
-    # decrypt_text = decryption_VertTranspos(encrypt_text, test_key)
+    test_text = "ПЕРЕСТАНОВКАТЕКСТАПОСТОЛБЦАМПРИВ"
+    test_key = "4312567"
+    encrypt_text = encryption_VertTranspos(test_text, test_key)
+    decrypt_text = ""
+    try:
+        decrypt_text = decryption_VertTranspos(encrypt_text, test_key)
+    except Exception as ex:
+        print(ex)
+    else:
+        print("Test  :", test_text)
+        print("Key   :", test_key)
+        print("Encode:", encrypt_text)
+        print("Decode:", decrypt_text)
+        print("Test decryption:", decrypt_text == test_text)
 
-    # print("Test  :", test_text)
-    # print("Key   :", test_key)
-    # print("Encode:", encrypt_text)
-    # print("Decode:", decrypt_text)
-    # print("Test decryption:", decrypt_text == test_text)
+    # source_text = "БСЕАГНМЗЛАЕООЯНПЛТБНАЕЕСЬЬЕА"
+    # key = "2X41XX7"
 
-    source_text = "БСЕАГНМЗЛАЕООЯНПЛТБНАЕЕСЬЬЕА"
-    key = "2X41XX7"
+    # brute_res = brute_VertTranspos(
+    #     source_text, key, lambda x: test_bigram(x))
 
-    brute_res = brute_VertTranspos(
-        source_text, key, lambda x: test_bigram(x))
-
-    for key, test in brute_res.items():
-        print(key, test)
+    # for key, test in brute_res.items():
+    #     print(key, test)
