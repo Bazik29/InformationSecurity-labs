@@ -44,11 +44,16 @@ if __name__ == "__main__":
     source_text = "ИСПОЛЪЗУЙТЕСРЕДСТВАКРИПТОГРАФИИДЛЯЗАЩИТЫ"
 
     key_word = generate_key(random.randint(0, len(source_text) - 1), alphabet)
-    encrypt_text = encryption_Vigenere(source_text, key_word, alphabet)
-    decrypt_text = decryption_Vigenere(encrypt_text, key_word, alphabet)
-
-    print("Text:", source_text)
-    print("Key:", key_word)
-    print("Encode:", encrypt_text)
-    print("Decode:", decrypt_text)
-    print("Test decryption:", decrypt_text == source_text)
+    encrypt_text = ""
+    decrypt_text = ""
+    try:
+        encrypt_text = encryption_Vigenere(source_text, key_word, alphabet)
+        decrypt_text = decryption_Vigenere(encrypt_text, key_word, alphabet)
+    except Exception as e:
+        print(e)
+    else:
+        print("Text:", source_text)
+        print("Key:", key_word)
+        print("Encode:", encrypt_text)
+        print("Decode:", decrypt_text)
+        print("Test decryption:", decrypt_text == source_text)
