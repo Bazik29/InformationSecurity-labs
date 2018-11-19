@@ -146,6 +146,10 @@
 # #     rg.addHole(gr, [5, 9])
 # #     print(gr)
 # #     print(rg.testGrillee(gr))
+
+
+
+
 # import sys
 # from PyQt5.QtWidgets import QApplication, QMainWindow
 # from PyQt5.uic import loadUi
@@ -203,7 +207,6 @@ def readDimsFromFile(path):
     return pairs
 
 
-# [ [[dim[0], dim[1]], key], ... ]
 def writeKeysToFile(path, keys):
     with open(path, 'w') as file:
         for grille in keys:
