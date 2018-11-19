@@ -2,3 +2,6 @@ __pycache__/
 .vscode
 .ipynb_checkpoints
 key.txt
+encode.bmp
+decode.bmp
+*.png
