@@ -24,7 +24,7 @@ def randomprime():
 
 
 def protS(*arg):
-    return (':'.join(list(map(str, arg)))).encode('utf-8')
+    return (':'.join(list(map(str, arg))) + ':').encode('utf-8')
 
 
 if __name__ == "__main__":
@@ -39,8 +39,8 @@ if __name__ == "__main__":
 
     Clients = []
 
-    # p, g = randomprime()
-    p, g = 23, 5
+    p, g = randomprime()
+    # p, g = 23, 5
 
     # Ожидание подключения всех клиентов
     while len(Clients) < n_cl:

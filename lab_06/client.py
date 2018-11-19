@@ -3,7 +3,7 @@ import random
 
 
 def protS(*arg):
-    return (':'.join(list(map(str, arg)))).encode('utf-8')
+    return (':'.join(list(map(str, arg))) + ':').encode('utf-8')
 
 
 class Client():
@@ -32,28 +32,26 @@ class Client():
     def processMsg(self, msg):
         flag = msg.pop(0)
 
-        if flag == '':
-            return
-        if flag == "pg":
-            p = int(msg.pop(0))
-            g = int(msg.pop(0))
-            self.p = p
-            self.g = g
-            print(f"p = {p}\ng = {g}")
-        elif flag == "getPublic":
-            sock.send(str(self.getPublicKey()).encode('utf-8'))
-        elif flag == "getSecretTemp":
-            sock.send(str(self.getSecretTemp()).encode('utf-8'))
-        elif flag == "setLast":
-            client.setSecret(int(msg.pop(0)), True)
-            print(f"Secret key: {self.secretKey}")
-        elif flag == "setTemp":
-            client.setSecret(int(msg.pop(0)), False)
-        else:
-            print("Command \"{msg}\" is invalid")
+        if flag != '':
+            if flag == "pg":
+                p = int(msg.pop(0))
+                g = int(msg.pop(0))
+                self.p = p
+                self.g = g
+                print(f"p = {p}\ng = {g}")
+            elif flag == "getPublic":
+                sock.send(str(self.getPublicKey()).encode('utf-8'))
+            elif flag == "getSecretTemp":
+                sock.send(str(self.getSecretTemp()).encode('utf-8'))
+            elif flag == "setLast":
+                client.setSecret(int(msg.pop(0)), True)
+                print(f"Secret key: {self.secretKey}")
+            elif flag == "setTemp":
+                client.setSecret(int(msg.pop(0)), False)
+            else:
+                print("Command \"{msg}\" is invalid")
 
         if msg:
-            print("recurs: ", msg)
             self.processMsg(msg)
 
 
