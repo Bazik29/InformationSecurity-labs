@@ -1,9 +1,10 @@
 # Цифровая подпись Эль Гамаля
 
 import random
+from math import gcd
 
 
-def lucaslemer(prime):
+def lucas_lemer(prime):
     S, k, M = 4, 1, 2**prime-1
     while k != (prime-1):
         S = ((S*S)-2) % M
@@ -14,32 +15,37 @@ def lucaslemer(prime):
         return False
 
 
-def randomprime():
+def random_prime():
     while True:
-        prime = random.randint(32, 64)
-        if (2 in [prime, 2**prime % prime]):
-            if lucaslemer(prime):
+        prime = random.randint(64, 256)
+        if 2 in [prime, 2**prime % prime]:
+            if lucas_lemer(prime):
                 break
-    return 2**prime-1, random.randint(4,13)
+    return 2**prime-1
 
 
-# def gcd(a, b):
-#     while a != b:
-#         if a > b:
-#             a = a - b
-#         else:
-#             b = b - a
-#     return a
+def egcd(a, b):
+    if a == 0:
+        return (b, 0, 1)
+    else:
+        g, y, x = egcd(b % a, a)
+        return (g, x - (b // a) * y, y)
 
 
-# def primitive_root(modulo):
-#     required_set = set(num for num in range(
-#         1, modulo) if gcd(num, modulo) == 1)
-#     for g in range(1, modulo):
-#         actual_set = set(pow(g, powers) %
-#                          modulo for powers in range(1, modulo))
-#         if required_set == actual_set:
-#             return g
+def modinv(a, m):
+    g, x, _ = egcd(a, m)
+    if g != 1:
+        raise Exception("Error")
+    else:
+        return x % m
+
+
+def random_k_invk(p):
+    k = random.randint(2, p-2)
+    if gcd(k, p-1) != 1:
+        return random_k_invk(p)
+    else:
+        return k, modinv(k, p-1)
 
 
 class User():
@@ -50,52 +56,60 @@ class User():
         self.public_key = pow(g, self.__secret_key, p)
 
     def __hash(self, message):
-        return sum([ord(i) for i in message]) % (p - 1)
+        h = sum([ord(i) for i in message]) % (p - 2)
+        if h == 1:
+            h += 1
+        return h
 
     def gen_new_key(self):
         self.__secret_key = random.randint(2, p - 1)
         self.public_key = pow(g, self.__secret_key, p)
 
     def make_sing(self, message):
-        k = random.randint(2, p - 2)
+        k, k_inv = random_k_invk(self.p)
+        # k_inv = modinv(k, p-1)
         r = pow(g, k, p)
         m = self.__hash(message)
-        print("h_1", m)
-        s = (m - self.__secret_key*r)/k % (p - 1)
+        s = (m - self.__secret_key*r) * k_inv % (p - 1)
+        # print(f"K: {k} iK: {k_inv} m: {m} r: {r} s: {s} sign({r},{s})\n")
         k = None
         return r, s
 
-    def check_sign(self, public_key, message, sign):
+    def check_sign(self, publicKey, message, sign):
         r, s = sign
         m = self.__hash(message)
-        print("h_2", m)
-        left = pow(public_key, r)*pow(r, s)
+        print("hash", m)
+        # print("yrp", publicKey, r, self.p)
+        # print("rsp", r, s, self.p)
+        left = pow(publicKey, r, self.p)*pow(r, s, self.p) % self.p
         right = pow(self.g, m, self.p)
+        # print("left:", left, "right:",  right)
         return left == right
 
+
 if __name__ == "__main__":
-    # g = randomprime()
-    # p = primitive_root(g)
-    g, p = randomprime() #991, 6
-    print(g, p)
+    # g = random_prime()
+    # p = random.randint(4, 13)
+    g, p = 618970019642690137449562111, 11
+    # print(g, p)
 
     Alice = User(g, p)
     Bob = User(g, p)
 
-    mesg_A = "Hello World!!!!!!!!!!!!!!!!!!!!!!!!!"
+    mesg_A = "Hello World!!!"
 
     sign_A = Alice.make_sing(mesg_A)
     res_check = Bob.check_sign(Alice.public_key, mesg_A, sign_A)
 
-    if res_check: 
+    if res_check:
         print("Это сообщение от Alice")
-    else: 
+    else:
         print("Это сообщение НЕ от Alice")
 
-    mesg_B = "Hello World?"
+    mesg_B = "Hello World!!?qw"
     res_check = Bob.check_sign(Alice.public_key, mesg_B, sign_A)
 
-    if res_check: 
+    if res_check:
         print("Это сообщение от Alice")
-    else: 
+    else:
         print("Это сообщение НЕ от Alice")
